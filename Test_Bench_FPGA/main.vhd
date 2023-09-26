@@ -18,9 +18,40 @@ entity CartridgeTB is
 			PPU_Data: inout std_logic_vector(7 downto 0);
 			
 			-- One-bit PPU Signals
-			PPU inv_WR: out std_logic;
-			PPU inv_RD: out std_logic;
-			PPU inv_A13: out std_logic;
+			PPU_inv_WR: out std_logic;
+			PPU_inv_RD: out std_logic;
+			PPU_inv_A13: out std_logic;
+			
+			-- Debug Signals
+			step_clk: in std_logic; --Requests the next address on the cartridge
+			reset: in std_logic;
+			CPU_Data_View: out std_logic_vector(7 downto 0);
+			PPU_Data_View: out std_logic_vector(7 downto 0);
+			
+			
+			
+			
 			
 	
 	);
+	
+	architecture TB_Arch of CartridgeTB is
+	
+	begin
+		
+		type state_types is (startup, runtime);
+		
+		signal state: state_types := startup; -- Setting initial value of the state machine to "startup"
+		
+		move_to_next_address: process
+			begin
+				if rising_edge(step_clk) and state = runtime then
+				
+				elsif state = startup then
+				
+					CPU_Address <= X"00";
+					PPU_Address <= X"00";
+				
+				
+				end if
+					

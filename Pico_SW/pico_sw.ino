@@ -187,8 +187,8 @@ uint32_t Calc_Rom_Size(uint8_t msb, uint8_t lsb)
 
 void init_rom(NESRom *rom, uint32_t file_size)
 {
-  uint32_t prg_rom_size = Calc_Rom_Size(rom->header.rom_sz_msb.prg_rom_sz, rom->header.prg_rom_sz_lsb);
-  uint32_t chr_rom_size = Calc_Rom_Size(rom->header.rom_sz_msb.chr_rom_sz, rom->header.chr_rom_sz_lsb);
+  uint32_t prg_rom_size = 16384 * Calc_Rom_Size(rom->header.rom_sz_msb.prg_rom_sz, rom->header.prg_rom_sz_lsb);
+  uint32_t chr_rom_size = 8192 * Calc_Rom_Size(rom->header.rom_sz_msb.chr_rom_sz, rom->header.chr_rom_sz_lsb);
   uint16_t trainer_size = 0;
 
   if (rom->header.flags6.trainer == true)
@@ -196,7 +196,7 @@ void init_rom(NESRom *rom, uint32_t file_size)
     trainer_size = 512;
   }
 
-  uint32_t misc_rom_size = file_size - sizeof(rom->header) - trainer_size - prg_rom_size - chr_rom_size;
+  uint32_t misc_rom_size = file_size - 16 - trainer_size - prg_rom_size - chr_rom_size;
 
   rom->prg_rom.offset = sizeof(rom->header) + trainer_size;
   rom->prg_rom.size = prg_rom_size;

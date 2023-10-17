@@ -116,6 +116,29 @@ typedef struct
 
 typedef struct
 {
+  uint8_t mapper_number : 4;
+  uint8_t submapper_number : 4;
+} NESMapper __attribute__((packed));
+
+typedef struct
+{
+  char identifier[4];
+  uint8_t prg_rom_sz_lsb;
+  uint8_t chr_rom_sz_lsb;
+  NESHeaderFlags6 flags6;
+  NESHeaderFlags7 flags7;
+  NESMapper mapper;
+  NESHeaderPrgChrSzMSB rom_sz_msb;
+  NESHeaderRamSz prg_ram_sz;
+  NESHeaderRamSz chr_ram_sz;
+  uint8_t timing;
+  NESHeaderSysType sys_type;
+  NESHeaderMisc misc;
+  uint8_t DefaultExpDevice;
+} NES2RomHeader __attribute__((packed));
+
+typedef struct
+{
   uint32_t offset;
   uint32_t size;
 } RomSection;
@@ -123,6 +146,14 @@ typedef struct
 struct NESRom
 {
   NESRomHeader header;
+  RomSection prg_rom;
+  RomSection chr_rom;
+  RomSection misc_rom;
+};
+
+struct NES2Rom
+{
+  NES2RomHeader header;
   RomSection prg_rom;
   RomSection chr_rom;
   RomSection misc_rom;

@@ -1,181 +1,224 @@
 --------------------------------------------------------------------------------
---
---   FileName:         spi_slave.vhd
---   Dependencies:     none
---   Design Software:  Quartus Prime Version 17.0.0 Build 595 SJ Lite Edition
---
---   HDL CODE IS PROVIDED "AS IS."  DIGI-KEY EXPRESSLY DISCLAIMS ANY
---   WARRANTY OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT
---   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
---   PARTICULAR PURPOSE, OR NON-INFRINGEMENT. IN NO EVENT SHALL DIGI-KEY
---   BE LIABLE FOR ANY INCIDENTAL, SPECIAL, INDIRECT OR CONSEQUENTIAL
---   DAMAGES, LOST PROFITS OR LOST DATA, HARM TO YOUR EQUIPMENT, COST OF
---   PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR SERVICES, ANY CLAIMS
---   BY THIRD PARTIES (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF),
---   ANY CLAIMS FOR INDEMNITY OR CONTRIBUTION, OR OTHER SIMILAR COSTS.
---
---   Version History
---   Version 1.0 7/5/2012 Scott Larson
---     Initial Public Release
---   Version 1.1 11/27/2012 Scott Larson
---     Added an asynchronous active low reset
---   Version 1.2 5/7/2019 Scott Larson
---     Modified architecture slightly to make it synthesizable with more tools
---
+-- PROJECT: SPI MASTER AND SLAVE FOR FPGA
+--------------------------------------------------------------------------------
+-- AUTHORS: Jakub Cabal <jakubcabal@gmail.com>
+-- LICENSE: The MIT License, please read LICENSE file
+-- WEBSITE: https://github.com/jakubcabal/spi-fpga
 --------------------------------------------------------------------------------
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-USE ieee.std_logic_arith.all;
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.MATH_REAL.ALL;
 
-ENTITY spi_slave IS
-  GENERIC(
-    cpol    : STD_LOGIC := '0';  --spi clock polarity mode
-    cpha    : STD_LOGIC := '0';  --spi clock phase mode
-    d_width : INTEGER := 8);     --data width in bits
-  PORT(
-    sclk         : IN     STD_LOGIC;  --spi clk from master
-    reset_n      : IN     STD_LOGIC;  --active low reset
-    ss_n         : IN     STD_LOGIC;  --active low slave select
-    mosi         : IN     STD_LOGIC;  --master out, slave in
-    rx_req       : IN     STD_LOGIC;  --'1' while busy = '0' moves data to the rx_data output
-    st_load_en   : IN     STD_LOGIC;  --asynchronous load enable
-    st_load_trdy : IN     STD_LOGIC;  --asynchronous trdy load input
-    st_load_rrdy : IN     STD_LOGIC;  --asynchronous rrdy load input
-    st_load_roe  : IN     STD_LOGIC;  --asynchronous roe load input
-    tx_load_en   : IN     STD_LOGIC;  --asynchronous transmit buffer load enable
-    tx_load_data : IN     STD_LOGIC_VECTOR(d_width-1 DOWNTO 0);  --asynchronous tx data to load
-    trdy         : BUFFER STD_LOGIC := '0';  --transmit ready bit
-    rrdy         : BUFFER STD_LOGIC := '0';  --receive ready bit
-    roe          : BUFFER STD_LOGIC := '0';  --receive overrun error bit
-    rx_data      : OUT    STD_LOGIC_VECTOR(d_width-1 DOWNTO 0) := (OTHERS => '0');  --receive register output to logic
-    busy         : OUT    STD_LOGIC := '0';  --busy signal to logic ('1' during transaction)
-    miso         : OUT    STD_LOGIC := 'Z'); --master in, slave out
-END spi_slave;
+-- THE SPI SLAVE MODULE SUPPORT ONLY SPI MODE 0 (CPOL=0, CPHA=0)!!!
 
-ARCHITECTURE logic OF spi_slave IS
-  SIGNAL mode    : STD_LOGIC;  --groups modes by clock polarity relation to data
-  SIGNAL clk     : STD_LOGIC;  --clock
-  SIGNAL bit_cnt : STD_LOGIC_VECTOR(d_width+8 DOWNTO 0);  --'1' for active transaction bit
-  SIGNAL wr_add  : STD_LOGIC;  --address of register to write ('0' = receive, '1' = status)
-  SIGNAL rd_add  : STD_LOGIC;  --address of register to read ('0' = transmit, '1' = status)
-  SIGNAL rx_buf  : STD_LOGIC_VECTOR(d_width-1 DOWNTO 0) := (OTHERS => '0');  --receiver buffer
-  SIGNAL tx_buf  : STD_LOGIC_VECTOR(d_width-1 DOWNTO 0) := (OTHERS => '0');  --transmit buffer
-BEGIN
-  busy <= NOT ss_n;  --high during transactions
-  
-  --adjust clock so writes are on rising edge and reads on falling edge
-  mode <= cpol XOR cpha;  --'1' for modes that write on rising edge
-  WITH mode SELECT
-    clk <= sclk WHEN '1',
-           NOT sclk WHEN OTHERS;
+entity SPI_SLAVE is
+    Generic (
+        WORD_SIZE : natural := 8 -- size of transfer word in bits, must be power of two
+    );
+    Port (
+        CLK      : in  std_logic; -- system clock
+        RST      : in  std_logic; -- high active synchronous reset
+        -- SPI SLAVE INTERFACE
+        SCLK     : in  std_logic; -- SPI clock
+        CS_N     : in  std_logic; -- SPI chip select, active in low
+        MOSI     : in  std_logic; -- SPI serial data from master to slave
+        MISO     : out std_logic; -- SPI serial data from slave to master
+        -- USER INTERFACE
+        DIN      : in  std_logic_vector(WORD_SIZE-1 downto 0); -- data for transmission to SPI master
+        DIN_VLD  : in  std_logic; -- when DIN_VLD = 1, data for transmission are valid
+        DIN_RDY  : out std_logic; -- when DIN_RDY = 1, SPI slave is ready to accept valid data for transmission
+        DOUT     : out std_logic_vector(WORD_SIZE-1 downto 0); -- received data from SPI master
+        DOUT_VLD : out std_logic  -- when DOUT_VLD = 1, received data are valid
+    );
+end entity;
 
-  --keep track of miso/mosi bit counts for data alignmnet
-  PROCESS(ss_n, clk)
-  BEGIN
-    IF(ss_n = '1' OR reset_n = '0') THEN                         --this slave is not selected or being reset
-     bit_cnt <= (conv_integer(NOT cpha) => '1', OTHERS => '0'); --reset miso/mosi bit count
-    ELSE                                                         --this slave is selected
-      IF(rising_edge(clk)) THEN                                  --new bit on miso/mosi
-        bit_cnt <= bit_cnt(d_width+8-1 DOWNTO 0) & '0';          --shift active bit indicator
-      END IF;
-    END IF;
-  END PROCESS;
+architecture RTL of SPI_SLAVE is
 
-  PROCESS(ss_n, clk, st_load_en, tx_load_en, rx_req)
-  BEGIN
-  
-    --write address register ('0' for receive, '1' for status)
-    IF(bit_cnt(1) = '1' AND falling_edge(clk)) THEN
-      wr_add <= mosi;
-    END IF;
+    constant BIT_CNT_WIDTH : natural := natural(ceil(log2(real(WORD_SIZE))));
 
-    --read address register ('0' for transmit, '1' for status)
-    IF(bit_cnt(2) = '1' AND falling_edge(clk)) THEN
-      rd_add <= mosi;
-    END IF;
+    signal sclk_meta          : std_logic;
+    signal cs_n_meta          : std_logic;
+    signal mosi_meta          : std_logic;
+    signal sclk_reg           : std_logic;
+    signal cs_n_reg           : std_logic;
+    signal mosi_reg           : std_logic;
+    signal spi_clk_reg        : std_logic;
+    signal spi_clk_redge_en   : std_logic;
+    signal spi_clk_fedge_en   : std_logic;
+    signal bit_cnt            : unsigned(BIT_CNT_WIDTH-1 downto 0);
+    signal bit_cnt_max        : std_logic;
+    signal last_bit_en        : std_logic;
+    signal load_data_en       : std_logic;
+    signal data_shreg         : std_logic_vector(WORD_SIZE-1 downto 0);
+    signal slave_ready        : std_logic;
+    signal shreg_busy         : std_logic;
+    signal rx_data_vld        : std_logic;
+
+begin
+
+    -- -------------------------------------------------------------------------
+    --  INPUT SYNCHRONIZATION REGISTERS
+    -- -------------------------------------------------------------------------
+
+    -- Synchronization registers to eliminate possible metastability.
+    sync_ffs_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            sclk_meta <= SCLK;
+            cs_n_meta <= CS_N;
+            mosi_meta <= MOSI;
+            sclk_reg  <= sclk_meta;
+            cs_n_reg  <= cs_n_meta;
+            mosi_reg  <= mosi_meta;
+        end if;
+    end process;
+
+    -- -------------------------------------------------------------------------
+    --  SPI CLOCK REGISTER
+    -- -------------------------------------------------------------------------
+
+    -- The SPI clock register is necessary for clock edge detection.
+    spi_clk_reg_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            if (RST = '0') then
+                spi_clk_reg <= '0';
+            else
+                spi_clk_reg <= sclk_reg;
+            end if;
+        end if;
+    end process;
+
+    -- -------------------------------------------------------------------------
+    --  SPI CLOCK EDGES FLAGS
+    -- -------------------------------------------------------------------------
+
+    -- Falling edge is detect when sclk_reg=0 and spi_clk_reg=1.
+    spi_clk_fedge_en <= not sclk_reg and spi_clk_reg;
+    -- Rising edge is detect when sclk_reg=1 and spi_clk_reg=0.
+    spi_clk_redge_en <= sclk_reg and not spi_clk_reg;
+
+    -- -------------------------------------------------------------------------
+    --  RECEIVED BITS COUNTER
+    -- -------------------------------------------------------------------------
+
+    -- The counter counts received bits from the master. Counter is enabled when
+    -- falling edge of SPI clock is detected and not asserted cs_n_reg.
+    bit_cnt_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            if (RST = '0') then
+                bit_cnt <= (others => '0');
+            elsif (spi_clk_fedge_en = '1' and cs_n_reg = '0') then
+                if (bit_cnt_max = '1') then
+                    bit_cnt <= (others => '0');
+                else
+                    bit_cnt <= bit_cnt + 1;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- The flag of maximal value of the bit counter.
+    bit_cnt_max <= '1' when (bit_cnt = WORD_SIZE-1) else '0';
+
+    -- -------------------------------------------------------------------------
+    --  LAST BIT FLAG REGISTER
+    -- -------------------------------------------------------------------------
+
+    -- The flag of last bit of received byte is only registered the flag of
+    -- maximal value of the bit counter.
+    last_bit_en_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            if (RST = '0') then
+                last_bit_en <= '0';
+            else
+                last_bit_en <= bit_cnt_max;
+            end if;
+        end if;
+    end process;
+
+    -- -------------------------------------------------------------------------
+    --  RECEIVED DATA VALID FLAG
+    -- -------------------------------------------------------------------------
+
+    -- Received data from master are valid when falling edge of SPI clock is
+    -- detected and the last bit of received byte is detected.
+    rx_data_vld <= spi_clk_fedge_en and last_bit_en;
+
+    -- -------------------------------------------------------------------------
+    --  SHIFT REGISTER BUSY FLAG REGISTER
+    -- -------------------------------------------------------------------------
+
+    -- Data shift register is busy until it sends all input data to SPI master.
+    shreg_busy_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            if (RST = '0') then
+                shreg_busy <= '0';
+            else
+                if (DIN_VLD = '1' and (cs_n_reg = '1' or rx_data_vld = '1')) then
+                    shreg_busy <= '1';
+                elsif (rx_data_vld = '1') then
+                    shreg_busy <= '0';
+                else
+                    shreg_busy <= shreg_busy;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- The SPI slave is ready for accept new input data when cs_n_reg is assert and
+    -- shift register not busy or when received data are valid.
+    slave_ready <= (cs_n_reg and not shreg_busy) or rx_data_vld;
     
-    --trdy register
-    IF((ss_n = '1' AND st_load_en = '1' AND st_load_trdy = '0') OR reset_n = '0') THEN  
-      trdy <= '0';   --cleared by user logic or reset
-    ELSIF(ss_n = '1' AND ((st_load_en = '1' AND st_load_trdy = '1') OR tx_load_en = '1')) THEN
-      trdy <= '1';   --set when tx buffer written or set by user logic
-    ELSIF(falling_edge(clk)) THEN
-      IF(wr_add = '1' AND bit_cnt(9) = '1') THEN
-        trdy <= mosi;  --new value written over spi bus
-      ELSIF(rd_add = '0' AND bit_cnt(d_width+8) = '1') THEN
-        trdy <= '0';   --clear when transmit buffer read
-      END IF;
-    END IF;
-    
-    --rrdy register
-    IF((ss_n = '1' AND ((st_load_en = '1' AND st_load_rrdy = '0') OR rx_req = '1')) OR reset_n = '0') THEN
-      rrdy <= '0';   --cleared by user logic or rx_data has been requested or reset
-    ELSIF(ss_n = '1' AND st_load_en = '1' AND st_load_rrdy = '1') THEN
-      rrdy <= '1';   --set when set by user logic
-    ELSIF(falling_edge(clk)) THEN
-      IF(wr_add = '1' AND bit_cnt(10) = '1') THEN
-        rrdy <= mosi;  --new value written over spi bus
-      ELSIF(wr_add = '0' AND bit_cnt(d_width+8) = '1') THEN
-        rrdy <= '1';   --set when new data received
-      END IF;
-    END IF;
-    
-    --roe register
-    IF((ss_n = '1' AND st_load_en = '1' AND st_load_roe = '0') OR reset_n = '0') THEN
-      roe <= '0';   --cleared by user logic or reset
-    ELSIF(ss_n = '1' AND st_load_en = '1' AND st_load_roe = '1') THEN
-      roe <= '1';   --set by user logic
-    ELSIF(falling_edge(clk)) THEN
-      IF(rrdy = '1' AND wr_add = '0' AND bit_cnt(d_width+8) = '1') THEN
-        roe <= '1';   --set by actual overrun
-      ELSIF(wr_add = '1' AND bit_cnt(11) = '1') THEN
-        roe <= mosi;  --new value written by spi bus
-      END IF;
-    END IF;
-    
-    --receive registers
-    --write to the receive register from master
-    IF(reset_n = '0') THEN
-      rx_buf <= (OTHERS => '0');
-    ELSE
-      FOR i IN 0 TO d_width-1 LOOP          
-        IF(wr_add = '0' AND bit_cnt(i+9) = '1' AND falling_edge(clk)) THEN
-          rx_buf(d_width-1-i) <= mosi;
-        END IF;
-      END LOOP;
-    END IF;
-    --fulfill user logic request for receive data
-    IF(reset_n = '0') THEN
-      rx_data <= (OTHERS => '0');
-    ELSIF(ss_n = '1' AND rx_req = '1') THEN  
-      rx_data <= rx_buf;
-    END IF;
+    -- The new input data is loaded into the shift register when the SPI slave
+    -- is ready and input data are valid.
+    load_data_en <= slave_ready and DIN_VLD;
 
-    --transmit registers
-    IF(reset_n = '0') THEN
-      tx_buf <= (OTHERS => '0');
-    ELSIF(ss_n = '1' AND tx_load_en = '1') THEN  --load transmit register from user logic
-      tx_buf <= tx_load_data;
-    ELSIF(rd_add = '0' AND bit_cnt(7 DOWNTO 0) = "00000000" AND bit_cnt(d_width+8) = '0' AND rising_edge(clk)) THEN
-      tx_buf(d_width-1 DOWNTO 0) <= tx_buf(d_width-2 DOWNTO 0) & tx_buf(d_width-1);  --shift through tx data
-    END IF;
+    -- -------------------------------------------------------------------------
+    --  DATA SHIFT REGISTER
+    -- -------------------------------------------------------------------------
 
-    --miso output register
-    IF(ss_n = '1' OR reset_n = '0') THEN           --no transaction occuring or reset
-      miso <= 'Z';
-    ELSIF(rising_edge(clk)) THEN
-      IF(rd_add = '1') THEN  --write status register to master
-        CASE bit_cnt(10 DOWNTO 8) IS
-          WHEN "001" => miso <= trdy;
-          WHEN "010" => miso <= rrdy;
-          WHEN "100" => miso <= roe;
-          WHEN OTHERS => NULL;
-        END CASE;
-      ELSIF(rd_add = '0' AND bit_cnt(7 DOWNTO 0) = "00000000" AND bit_cnt(d_width+8) = '0') THEN
-        miso <= tx_buf(d_width-1);                  --send transmit register data to master
-      END IF;
-    END IF;
+    -- The shift register holds data for sending to master, capture and store
+    -- incoming data from master.
+    data_shreg_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            if (load_data_en = '1') then
+                data_shreg <= DIN;
+            elsif (spi_clk_redge_en = '1' and cs_n_reg = '0') then
+                data_shreg <= data_shreg(WORD_SIZE-2 downto 0) & mosi_reg;
+            end if;
+        end if;
+    end process;
+
+    -- -------------------------------------------------------------------------
+    --  MISO REGISTER
+    -- -------------------------------------------------------------------------
+
+    -- The output MISO register ensures that the bits are transmit to the master
+    -- when is not assert cs_n_reg and falling edge of SPI clock is detected.
+    miso_p : process (CLK)
+    begin
+        if (rising_edge(CLK)) then
+            if (load_data_en = '1') then
+                MISO <= DIN(WORD_SIZE-1);
+            elsif (spi_clk_fedge_en = '1' and cs_n_reg = '0') then
+                MISO <= data_shreg(WORD_SIZE-1);
+            end if;
+        end if;
+    end process;
+
+    -- -------------------------------------------------------------------------
+    --  ASSIGNING OUTPUT SIGNALS
+    -- -------------------------------------------------------------------------
     
-  END PROCESS;
-END logic;
+    DIN_RDY  <= slave_ready;
+    DOUT     <= data_shreg;
+    DOUT_VLD <= rx_data_vld;
+
+end architecture;

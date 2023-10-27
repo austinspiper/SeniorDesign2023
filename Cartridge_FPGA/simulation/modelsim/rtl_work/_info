@@ -1,0 +1,361 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/simulation/modelsim
+Einout_mux
+Z1 w1698367474
+Z2 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+Z5 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/inout_mux.vhd
+Z6 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/inout_mux.vhd
+l0
+L6
+V57DHo7DFD2>oj^@J9iG@82
+!s100 LO;21HEdojF45m3moV54G1
+Z7 OV;C;10.5b;63
+31
+Z8 !s110 1698369895
+!i10b 1
+Z9 !s108 1698369895.000000
+Z10 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/inout_mux.vhd|
+Z11 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/inout_mux.vhd|
+!i113 1
+Z12 o-93 -work work
+Z13 tExplicit 1 CvgOpt 0
+Abehavioral
+R2
+R3
+R4
+DEx4 work 9 inout_mux 0 22 57DHo7DFD2>oj^@J9iG@82
+l23
+L21
+Vlkh3<6FAUbJ1TFmeg93EH3
+!s100 i:fLIPkC?L5_[g7I1<MTK2
+R7
+31
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+R13
+Emain_tb
+Z14 w1698369403
+R2
+R3
+R4
+R0
+Z15 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/main_tb.vhd
+Z16 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/main_tb.vhd
+l0
+L5
+V=4J`FcHccQ[J78^b=DLIR3
+!s100 jHS;S^BLiN:OE]@N]Q^oX2
+R7
+31
+R8
+!i10b 1
+R9
+Z17 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/main_tb.vhd|
+Z18 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/main_tb.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+Z19 DEx4 work 11 system_test 0 22 Yo6SGOGRU3C>OeEXnoGHd2
+R2
+R3
+R4
+DEx4 work 7 main_tb 0 22 =4J`FcHccQ[J78^b=DLIR3
+l30
+L8
+VO?Nf7NK>m4Z;00z_3HWnE0
+!s100 5cW]Af0CP<f`]1=fn075n1
+R7
+31
+R8
+!i10b 1
+R9
+R17
+R18
+!i113 1
+R12
+R13
+Enes_input
+Z20 w1698367456
+R2
+R3
+R4
+R0
+Z21 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/nes_input.vhd
+Z22 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/nes_input.vhd
+l0
+L6
+VT54lX]1BLL^mM`LG3LfML0
+!s100 _hk5JHCK[zGn871V6[=zA2
+R7
+31
+R8
+!i10b 1
+R9
+Z23 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/nes_input.vhd|
+Z24 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/nes_input.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R2
+R3
+R4
+DEx4 work 9 nes_input 0 22 T54lX]1BLL^mM`LG3LfML0
+l28
+L27
+VVakYVcoF;bj?]djAZPiZK2
+!s100 U1HK^:9N;gf=n_XNhl;Ro0
+R7
+31
+R8
+!i10b 1
+R9
+R23
+R24
+!i113 1
+R12
+R13
+Eoc_mem
+Z25 w1698367658
+R2
+R3
+R4
+R0
+Z26 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/oc_mem.vhd
+Z27 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/oc_mem.vhd
+l0
+L5
+V8M]W=bo[J0J2?i@=SA3;i1
+!s100 `5ZVYJS71kAS<Lh;HIh?c3
+R7
+31
+Z28 !s110 1698369894
+!i10b 1
+Z29 !s108 1698369894.000000
+Z30 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/oc_mem.vhd|
+Z31 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/oc_mem.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+R2
+R3
+R4
+DEx4 work 6 oc_mem 0 22 8M]W=bo[J0J2?i@=SA3;i1
+l24
+L18
+V:JZYNh@fYzYPE823JXVIa0
+!s100 5^2BT`FN[:ehFlMTT<jd`2
+R7
+31
+R28
+!i10b 1
+R29
+R30
+R31
+!i113 1
+R12
+R13
+Espi_input
+Z32 w1698368304
+R2
+R3
+R4
+R0
+Z33 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_input.vhd
+Z34 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_input.vhd
+l0
+L6
+VhYR=aCPKS6DjI;`zTSNHl2
+!s100 W1IK`X6fRZI0f4d5KKAgf1
+R7
+31
+R8
+!i10b 1
+R9
+Z35 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_input.vhd|
+Z36 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_input.vhd|
+!i113 1
+R12
+R13
+Abehavioral
+Z37 DPx4 ieee 9 math_real 0 22 Sk6CSihbPL<f[^Shm]=KX0
+Z38 DEx4 work 9 spi_slave 0 22 ^4YegBK4]O`;;n?nD;Bmz3
+R2
+R3
+R4
+DEx4 work 9 spi_input 0 22 hYR=aCPKS6DjI;`zTSNHl2
+l39
+L23
+VKiJU?dZ0`]LYN32K9UO3a1
+!s100 d_MXd`@QLYQ5Ij1GMRbW43
+R7
+31
+R8
+!i10b 1
+R9
+R35
+R36
+!i113 1
+R12
+R13
+Espi_slave
+Z39 w1698368100
+R37
+R2
+R3
+R4
+R0
+Z40 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_slave.vhd
+Z41 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_slave.vhd
+l0
+L16
+V^4YegBK4]O`;;n?nD;Bmz3
+!s100 G>_Zn:2nl>c4FZKQieA<c2
+R7
+31
+R28
+!i10b 1
+R29
+Z42 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_slave.vhd|
+Z43 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/spi_slave.vhd|
+!i113 1
+R12
+R13
+Artl
+R37
+R2
+R3
+R4
+R38
+l59
+L37
+Vj3IIYo`i0ghIU8e_82XE]0
+!s100 =ic]YiCefgVLVI_0lQFGN3
+R7
+31
+R28
+!i10b 1
+R29
+R42
+R43
+!i113 1
+R12
+R13
+Esystem_pll
+Z44 w1697380512
+R3
+R4
+R0
+Z45 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_pll.vhd
+Z46 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_pll.vhd
+l0
+L43
+V0ml4lU;<U?D^Iki0TVU793
+!s100 c9WXRnX]7A6U=b0VknCN92
+R7
+31
+R8
+!i10b 1
+R29
+Z47 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_pll.vhd|
+Z48 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_pll.vhd|
+!i113 1
+R12
+R13
+Asyn
+R3
+R4
+DEx4 work 10 system_pll 0 22 0ml4lU;<U?D^Iki0TVU793
+l126
+L52
+V6ZE?M8aU@cG0b:WL>@A3l1
+!s100 cQ3]`Az9P<AIU6Y26aWAl3
+R7
+31
+R8
+!i10b 1
+R29
+R47
+R48
+!i113 1
+R12
+R13
+vsystem_pll_altpll
+R28
+!i10b 1
+!s100 M]UJgVI25[HDInYcf44jM1
+I?AP:lmb4FJ6cI7f3`=lfb2
+VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1697395842
+8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/db/system_pll_altpll.v
+FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/db/system_pll_altpll.v
+L0 30
+OV;L;10.5b;63
+r1
+!s85 0
+31
+R29
+!s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/db/system_pll_altpll.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/db|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/db/system_pll_altpll.v|
+!i113 1
+o-vlog01compat -work work
+!s92 -vlog01compat -work work +incdir+G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/db
+tCvgOpt 0
+Esystem_test
+Z49 w1698368363
+R3
+R4
+R0
+Z50 8G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_test.vhd
+Z51 FG:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_test.vhd
+l0
+L25
+VYo6SGOGRU3C>OeEXnoGHd2
+!s100 hkIkmnQCUUgHHYN3E8f[V2
+R7
+31
+R28
+!i10b 1
+R29
+Z52 !s90 -reportprogress|300|-93|-work|work|G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_test.vhd|
+Z53 !s107 G:/DE0-Nano_v.1.2.8_SystemCD/Tools/DE0_Nano_SystemBuilder/CodeGenerated/DE0_NANO/DE0_NANO_test/system_test.vhd|
+!i113 1
+R12
+R13
+Abdf_type
+R3
+R4
+R19
+l137
+L46
+V70N^1ia=ij^1<z:=Tg?2h0
+!s100 ^SzYU;OHUELQ;8]HD=2O:3
+R7
+31
+R28
+!i10b 1
+R29
+R52
+R53
+!i113 1
+R12
+R13

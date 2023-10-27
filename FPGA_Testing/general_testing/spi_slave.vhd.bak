@@ -1,0 +1,75 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity spi_slave is
+    Port ( 
+           SCLK : in STD_LOGIC;
+           MISO : out STD_LOGIC;
+           MOSI : in STD_LOGIC;
+           SS   : in STD_LOGIC;
+           RESET: in STD_LOGIC;
+           DATA_IN : in STD_LOGIC_VECTOR(23 downto 0);
+           DATA_OUT : out STD_LOGIC_VECTOR(23 downto 0)
+         );
+end spi_slave;
+
+architecture Behavioral of spi_slave is
+
+signal shift_reg_in  : STD_LOGIC_VECTOR(23 downto 0) := (others => '0');
+signal shift_reg_out : STD_LOGIC_VECTOR(22 downto 0) := (others => '0');
+signal bit_counter   : INTEGER := 0;
+signal prev_SCLK     : STD_LOGIC := '0';
+--signal prev_SS       : STD_LOGIC := '1';
+
+begin
+
+process(RESET, SCLK, SS, DATA_IN)
+begin
+    if RESET = '0' then
+        --bit_counter <= 0;
+        shift_reg_in <= (others => '0');
+        shift_reg_out <= DATA_IN(22 downto 0);
+		  MISO <= DATA_IN(23);
+		  DATA_OUT <= (others => '0'); -- Ensure DATA_OUT is reset
+        prev_SCLK <= '0';
+	 elsif SS = '1' then
+		--bit_counter <= 0;
+      shift_reg_out <= DATA_IN(22 downto 0);
+		MISO <= DATA_IN(23);
+      DATA_OUT <= shift_reg_in;
+    elsif rising_edge(SCLK) and SS = '0' then
+       -- if bit_counter < 24 then
+            shift_reg_in <= shift_reg_in(22 downto 0) & MOSI;
+            MISO <= shift_reg_out(22);
+            shift_reg_out <= shift_reg_out(21 downto 0) & '0';  -- Shift right with zero padding (for this example)
+        --    bit_counter <= bit_counter + 1;
+       -- end if;
+    end if;
+    
+    -- Handling SS to synchronize and avoid metastability issues
+    --if SS = '1' then
+	 --    bit_counter <= 0;
+        --shift_reg_out <= DATA_IN;
+    --    DATA_OUT <= shift_reg_in;
+    --end if;
+    
+    --prev_SCLK <= SCLK;
+
+end process;
+
+
+--shift_reg_in <= (others => '0') when RESET = '0' else
+--					 (shift_reg_in(22 downto 0) & MOSI) when (rising_edge(SCLK) and SS = '0');
+--					 
+--shift_reg_out <= DATA_IN(22 downto 0) when (RESET = '0' or SS = '1') else
+--					(shift_reg_out(21 downto 0) & '0') when (rising_edge(SCLK) and SS = '0');
+--
+--MISO <= DATA_IN(23) when (RESET = '0' or SS = '1') else
+--		  shift_reg_out(22) when (rising_edge(SCLK) and SS = '0');
+--		  
+--DATA_OUT <= (others => '0') when RESET = '0' else
+--				shift_reg_in when SS = '1';
+
+end Behavioral;

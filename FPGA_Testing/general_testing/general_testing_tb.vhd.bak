@@ -1,0 +1,127 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity bs_testing_tb is
+end bs_testing_tb;
+
+architecture Behavioral of bs_testing_tb is
+
+	 signal tb_reset :  std_logic := '0';
+	 signal tb_S_SS_n : std_logic;
+	 signal tb_S_SCLK :  std_logic := '0';
+	 signal tb_S_MOSI :  std_logic := '0';
+	 signal tb_S_MISO :  std_logic := '0';
+	 signal tb_spi_dbg : std_logic := '0';
+	 constant ClockFrequency : integer := 50e6; -- 50 MHz
+    constant ClockPeriod    : time    := 1000 ms / ClockFrequency;
+	 signal tb_CLK    : std_logic := '0';
+	 
+	 constant test_msg : std_logic_vector(15 downto 0) := x"FF81";
+	 constant test_msg2 : std_logic_vector(15 downto 0) := x"5580";
+	 constant test_msg3 : std_logic_vector(15 downto 0) := x"0001";
+    
+begin
+
+
+	 tb_CLK <= not tb_CLK after ClockPeriod / 2;
+	 
+	 m : entity work.bs_testing
+    port map 
+    (
+	   CLK => tb_CLK,
+		reset => tb_reset,
+		S_SCLK => tb_S_SCLK,
+		S_MOSI => tb_S_MOSI,
+		S_MISO => tb_S_MISO,
+		S_SS => tb_S_SS_n,
+		spi_dbg => tb_spi_dbg
+    );
+
+    tb_proc : process 
+    begin
+	 	tb_S_SS_n <= '1';
+		tb_reset <= '0';
+		wait for 25 ns;
+		tb_reset <= '1';
+		tb_S_SS_n <= '0';
+		wait for 8 ns;
+	 	  for i in 0 to 7 loop
+		  tb_S_SCLK <= '0';
+		  tb_S_MOSI <= test_msg(7-i);
+        wait for 25 ns;
+		  tb_S_SCLK <= '1';
+		  wait for 25 ns;
+      end loop;
+		wait for 8 ns;
+		tb_S_SS_n <= '1';
+		wait for 40 ns;
+		tb_S_SS_n <= '0';
+		wait for 8 ns;
+	  for i in 0 to 7 loop
+		  tb_S_SCLK <= '0';
+		  tb_S_MOSI <= test_msg(15-i);
+        wait for 25 ns;
+		  tb_S_SCLK <= '1';
+		  wait for 25 ns;
+      end loop;
+		wait for 8 ns;
+		tb_S_SS_n <= '1';
+		wait for 8 ns;
+		wait for 40 ns;
+		tb_S_SS_n <= '0';
+		wait for 8 ns;
+	 	  for i in 0 to 7 loop
+		  tb_S_SCLK <= '0';
+		  tb_S_MOSI <= test_msg2(7-i);
+        wait for 25 ns;
+		  tb_S_SCLK <= '1';
+		  wait for 25 ns;
+      end loop;
+		wait for 8 ns;
+		tb_S_SS_n <= '1';
+		wait for 16 ns;
+		tb_S_SS_n <= '0';
+		wait for 8 ns;
+	  for i in 0 to 7 loop
+		  tb_S_SCLK <= '0';
+		  tb_S_MOSI <= test_msg2(15-i);
+        wait for 25 ns;
+		  tb_S_SCLK <= '1';
+		  wait for 25 ns;
+      end loop;
+		wait for 8 ns;
+		tb_S_SS_n <= '1';
+		wait for 8 ns;
+		wait for 40 ns;
+		tb_S_SS_n <= '0';
+		wait for 8 ns;
+	 	  for i in 0 to 7 loop
+		  tb_S_SCLK <= '0';
+		  tb_S_MOSI <= test_msg3(7-i);
+        wait for 25 ns;
+		  tb_S_SCLK <= '1';
+		  wait for 25 ns;
+      end loop;
+		wait for 8 ns;
+		tb_S_SS_n <= '1';
+		wait for 40 ns;
+		tb_S_SS_n <= '0';
+		wait for 8 ns;
+	  for i in 0 to 7 loop
+		  tb_S_SCLK <= '0';
+		  tb_S_MOSI <= test_msg3(15-i);
+        wait for 25 ns;
+		  tb_S_SCLK <= '1';
+		  wait for 25 ns;
+      end loop;
+		wait for 8 ns;
+		tb_S_SS_n <= '1';
+		wait for 8 ns;
+		wait for 40 ns;
+		wait for 100 ns;
+	report "Just Kidding.   Test Done."  severity failure ;
+        wait;
+    end process;
+   
+end Behavioral;

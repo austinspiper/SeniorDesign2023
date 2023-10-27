@@ -1,0 +1,31 @@
+# Copyright (C) 2023  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+
+# Quartus Prime Version 22.1std.2 Build 922 07/20/2023 SC Lite Edition
+# File: C:\Users\olie\Desktop\general_testing\general_testing.csv
+# Generated on: Thu Oct 26 20:49:42 2023
+
+# Note: The column header names should not be changed if you wish to import this .csv file into the Quartus Prime software.
+
+To,Direction,Location,I/O Bank,VREF Group,Fitter Location,I/O Standard,Reserved,Current Strength,Slew Rate,Differential Pair,Strict Preservation
+CLK,Input,PIN_R8,3,B3_N0,PIN_R8,2.5 V,,,,,
+reset,Input,PIN_K15,5,B5_N0,PIN_K15,2.5 V,,,,,
+S_MISO,Output,PIN_J13,5,B5_N0,PIN_J13,2.5 V,,,,,
+S_MOSI,Input,PIN_J14,5,B5_N0,PIN_J14,2.5 V,,,,,
+S_SCLK,Input,PIN_J16,5,B5_N0,PIN_J16,2.5 V,,,,,
+S_SS,Input,PIN_M10,4,B4_N0,PIN_M10,2.5 V,,,,,
+spi_dbg,Output,PIN_A15,7,B7_N0,PIN_A15,2.5 V,,,,,
+spi_dbg_st[0],Unknown,PIN_N14,5,B5_N0,,,,,,,
+spi_dbg_st[1],Unknown,PIN_P14,4,B4_N0,,,,,,,

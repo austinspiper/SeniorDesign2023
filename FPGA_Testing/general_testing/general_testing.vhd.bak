@@ -1,0 +1,139 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity bs_testing is
+    Port ( 
+		 CLK : in std_logic;
+		 reset : in std_logic;
+		 S_SCLK : in std_logic;
+		 S_MOSI : in std_logic;
+		 S_MISO : out std_logic;
+		 S_SS : in std_logic;
+		 spi_dbg : out std_logic
+		 --spi_dbg_st : out std_logic_vector(1 downto 0)
+        );
+end bs_testing;
+
+architecture Behavioral of bs_testing is
+	type s_state is (load_op, load_adr, load_len, load_data);
+
+  signal s_din : std_logic_vector(23 downto 0) := x"000000";
+  --signal s_din_vld : std_logic := '0';
+  --signal s_din_rdy : std_logic := '0';
+  --signal s_dout_vld : std_logic := '0';
+  signal s_dout : std_logic_vector(23 downto 0) := x"000000";
+  signal ready : std_logic := '0';
+  signal spi_state : std_logic_vector(1 downto 0) := "00";
+  signal adr : std_logic_vector(7 downto 0) := x"00";
+  signal data : std_logic_vector(7 downto 0) := x"00";
+  signal len : std_logic_vector(7 downto 0) := x"00";
+  signal rw : std_logic := '0';
+
+begin
+
+	test_proc : process(reset, S_SS)
+	begin
+		if (reset = '0') then
+			--s_din <= x"000000";
+			spi_dbg <= '1';
+			spi_state <= "00";
+			--adr <= x"00";
+			--data <= x"00";
+			--len <= x"00";
+			--rw <= '1';
+			--ready <= '0';
+		--elsif (S_SS = '1' and ready = '1') then
+		elsif (rising_edge(S_SS)) then
+			
+				case spi_state is
+				when "00" =>
+				--	len <= s_dout(7 downto 0);
+				--	s_din <= x"050000";
+					spi_state <= "01";
+				when "01" =>
+					--data <= s_dout(7 downto 0);
+					--len <= x"00";
+					--s_din <= x"030000";
+					spi_state <= "00";
+				when others =>
+				--len <= x"00";
+					--s_din <= x"010000";
+					spi_state <= "00";
+				end case;
+			--else
+				--s_din <= s_dout;
+				--spi_state <= spi_state;
+				--spi_state <= spi_state;
+		--elsif (S_SS = '0' and ready = '0') then
+			--ready <= '1';
+		--	s_din <= s_dout;
+		--	else
+		--				ready <= ready;
+		--	s_din <= s_dout;
+		--else
+			--ready <= '0';
+		--	s_din <= s_dout;
+			--spi_state <= spi_state;
+		end if;
+	end process;
+	
+	--spi_dbg_st <= spi_state;
+	--s_din <= x"010000" when spi_state = "00" else
+	--			x"040000" when spi_state = "01" else
+	--			x"100000" when spi_state = "10" else
+	--			x"000000";
+	s_din <= x"000000" when reset = '0' else
+				data & x"0000" when S_SS = '1' else
+				s_din;
+	adr <= x"00" when reset = '0' else
+			s_dout(7 downto 0) when spi_state = "01" and S_SS = '1' else
+			adr;
+	rw <= adr(7);
+	data <= "ZZZZZZZZ" when rw = '0' else
+			x"00" when reset = '0' else
+			s_dout(7 downto 0) when spi_state = "00" and S_SS = '1' else
+			data;
+	len <= '0' & adr(6 downto 0);
+        
+   --spi_proc : process(CLK)
+   --begin
+	--		if rising_edge(CLK) then
+	--			if (reset = '0') then
+	--				s_din <= x"000000";
+	--				--s_din_vld <= '1';
+	--				spi_dbg <= '1';
+	--				ready <= '0';
+	--			end if;
+	--			if (S_SS = '1' and ready = '1') then
+	--				ready <= '0';
+	--				s_din <= s_dout;
+	--				--s_din_vld <= '1';
+	--			elsif (S_SS = '0' and ready = '0') then
+	--				ready <= '1';
+	--			end if;
+   --    end if;
+   -- end process;
+	--
+	slave_i : entity work.SPI_SLAVE
+   port map (
+        RESET      => reset,
+        -- SPI MASTER INTERFACE
+        SCLK     => S_SCLK,
+        MOSI     => S_MOSI,
+        MISO     => s_MISO,
+        -- USER INTERFACE
+        DATA_IN      => s_din,
+        DATA_OUT     => s_dout,
+		  SS => S_SS
+    );
+	 
+	 	oc_mem : entity work.os_mem
+   port map (
+        reset      => reset,
+        clk     => CLK,
+        data     => data,
+        addr     => len,
+        we      => rw
+    );
+end Behavioral;

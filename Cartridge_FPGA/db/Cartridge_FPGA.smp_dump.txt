@@ -1,0 +1,15 @@
+
+State Machine - |Cartridge_FPGA|spi_input:b2v_spi_ctrl|spi_state
+Name spi_state.load_data spi_state.load_len spi_state.load_op 
+spi_state.load_op 0 0 0 
+spi_state.load_len 0 1 1 
+spi_state.load_data 1 0 1 
+
+State Machine - |Cartridge_FPGA|spi_input:b2v_spi_ctrl|opcode
+Name opcode.write_cpu opcode.toggle_write_prot opcode.read_ppu opcode.read_cpu opcode.write_ppu opcode.none 
+opcode.none 0 0 0 0 0 0 
+opcode.write_ppu 0 0 0 0 1 1 
+opcode.read_cpu 0 0 0 1 0 1 
+opcode.read_ppu 0 0 1 0 0 1 
+opcode.toggle_write_prot 0 1 0 0 0 1 
+opcode.write_cpu 1 0 0 0 0 1 

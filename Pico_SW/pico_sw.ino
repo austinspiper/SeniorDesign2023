@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <SD.h>
 
-
 #define PIN_SD_MISO 12
 #define PIN_SD_MOSI 11
 #define PIN_SD_SCK 14
@@ -26,11 +25,9 @@ uint8_t msg_toggle_prot[] = {0x02};
 #define SPI_CLOCK SD_SCK_MHZ(1)
 
 #define SD_CONFIG SdSpiConfig(PIN_WRITING_IND, DEDICATED_SPI, SPI_CLOCK)
-File myFile;
 #define ROM_NAME "selection.nes"
 
 #define SPI_TRANSFER_LIMIT 512
-
 #define GET_BIT(x,y) (x>>y) & 0x01
 
 typedef enum
@@ -39,23 +36,6 @@ typedef enum
   CMD_CFG = 1,
   CMD_UPDATE_FPGA = 2
 } CommandOp;
-
-typedef enum
-{
-  PPU = 0,
-  CPU = 1,
-  EXP = 2
-} FPGABus;
-
-typedef struct
-{
-  FPGABus bus;
-  uint16_t address;
-  uint16_t size;
-  uint8_t *data;
-  uint8_t crc;
-} FPGAMessage __attribute__((packed));
-
 
 typedef struct
 {

@@ -30,13 +30,6 @@ uint8_t msg_toggle_prot[] = {0x02};
 #define SPI_TRANSFER_LIMIT 512
 #define GET_BIT(x,y) (x>>y) & 0x01
 
-typedef enum
-{
-  CMD_GET_VERSIONS = 0,
-  CMD_CFG = 1,
-  CMD_UPDATE_FPGA = 2
-} CommandOp;
-
 typedef struct
 {
   uint8_t mirroring_type : 1;
